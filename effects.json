@@ -1,0 +1,12 @@
+[
+    {"Name":"Heavy Thrust","OffensiveBuffs":[10,0],"Target":"Self","Duration":30},
+    {"Name":"Battle Litany","OffensiveBuffs":[0,15],"Target":"Area","Duration":20},
+    {"Name":"Life Surge","OffensiveBuffs":[0,100],"Target":"Self","Duration":10,"AppliesTo":1,"OnlyNextWeaponskill":true},
+    {"Name":"Blood for Blood","OffensiveBuffs":[15,0],"DefensiveBuffs":[-10,0],"Target":"Self","Duration":20},
+    {"Name":"Dive Ready","Target":"Self","Duration":15},
+    {"Name":"Piercing Resistance Down","DefensiveBuffs":[0,-5],"Target":"Enemy","Duration":30},
+    {"Name":"Chaos Thrust","Target":"Enemy","Duration":30,"DoTPotency":35},
+    {"Name":"Sharper Fang and Claw","Target":"Self","Duration":10},
+    {"Name":"Enhanced Wheeling Thrust","Target":"Self","Duration":10},
+    {"Name":"Dragon Sight","Target":"Self","Duration":20,"OffensiveBuffs":[10,0]}
+]
