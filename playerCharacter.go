@@ -13,6 +13,7 @@ const level70DrgStr int = 115
 const directBonus float64 = 1.2
 
 const animationLock float64 = 0.75
+const longAnimationLock float64 = 1.50
 
 const autoAttackPot float64 = 110.0 / 100.0
 
@@ -50,7 +51,7 @@ type playerSkill struct {
 	OnCooldown              bool
 	CooldownTime            float64
 	TimeRemainingOnCooldown float64
-	AnimationLock           float64
+	LongAnimationLock       bool
 	ActivateStance          bool
 	CheckStance             bool
 	AlertStance             bool
@@ -116,10 +117,10 @@ func (p *playerCharacter) performAction(skillName string, enemyData *enemy) *ski
 				} else {
 					p.Skills[i].OnCooldown = true
 					p.Skills[i].TimeRemainingOnCooldown = p.Skills[i].CooldownTime
-					if p.Skills[i].AnimationLock == 0 {
-						p.AnimationLock = animationLock
+					if p.Skills[i].LongAnimationLock {
+						p.AnimationLock = longAnimationLock
 					} else {
-						p.AnimationLock = p.Skills[i].AnimationLock
+						p.AnimationLock = animationLock
 					}
 				}
 			}

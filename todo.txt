@@ -1,5 +1,4 @@
 Short Term:
-- Long and short animation locks: Currently all skills have the same global 0.75 second animation lock.
 - Unified logging/verbosity switches: Allow for various verbosity in logging and also have a unified printf call, so this can be controlled globally
 - Multiple runs of a simulation: Collect statistical information after n number of runs of a simulation (Note: Will be better if unified logging is done first)
 - Positional damage: Currently all positionals are assumed to have been hit
