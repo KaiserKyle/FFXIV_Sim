@@ -1,6 +1,6 @@
 package main
 
-import "fmt"
+import "strconv"
 
 type stance interface {
 	activate()
@@ -25,7 +25,7 @@ func (d *dragoonStance) activate() {
 	d.Active = true
 	d.Stacks = 0
 
-	fmt.Printf("[STANCE ACTIVATED] %s\n", d.Name)
+	globalLog(Basic, "[STANCE ACTIVATED] "+d.Name)
 }
 
 func (d *dragoonStance) isActive() bool {
@@ -40,11 +40,11 @@ func (d *dragoonStance) advanceTime(span float64) {
 	if d.Active && d.Timer <= 0.0 {
 		if d.Name == "Blood of the Dragon" {
 			d.Active = false
-			fmt.Printf("[STANCE DEACTIVATED] %s\n", d.Name)
+			globalLog(Basic, "[STANCE DEACTIVATED] "+d.Name)
 		} else {
 			d.Name = "Blood of the Dragon"
 			d.Timer = 20.0
-			fmt.Printf("[STANCE DEMOTED] %s\n", d.Name)
+			globalLog(Basic, "[STANCE DEMOTED] "+d.Name)
 		}
 	}
 }
@@ -100,14 +100,14 @@ func (d *dragoonStance) alertSkill(skillName string) {
 			if d.Timer > 30.0 {
 				d.Timer = 30.0
 			}
-			fmt.Printf("[STANCE TIMER INCREASED] %f\n", d.Timer)
+			globalLogFloat(Basic, "[STANCE TIMER INCREASED] ", d.Timer)
 		} else if skillName == "Geirskogul" && d.Stacks == 3 {
 			d.Name = "Life of the Dragon"
 			d.Stacks = 0
 			if d.Timer < 20.0 {
 				d.Timer = 20.0
 			}
-			fmt.Printf("[STANCE PROMOTED] %s\n", d.Name)
+			globalLog(Basic, "[STANCE PROMOTED] "+d.Name)
 		}
 	}
 	if d.Active && skillName == "Mirage Dive" {
@@ -115,6 +115,6 @@ func (d *dragoonStance) alertSkill(skillName string) {
 		if d.Stacks > 3 {
 			d.Stacks = 3
 		}
-		fmt.Printf("[STANCE STACKS INCREASED] %d\n", d.Stacks)
+		globalLog(Basic, "[STANCE STACKS INCREASED] "+strconv.Itoa(d.Stacks))
 	}
 }

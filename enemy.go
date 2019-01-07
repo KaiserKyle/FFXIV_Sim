@@ -17,13 +17,13 @@ type enemy struct {
 func (e *enemy) applyEffect(eff effect) {
 	e.Effects = append(e.Effects, eff)
 
-	fmt.Printf("    [EFFECT APPLIED] %s to %s: %v %v\n", eff.Name, e.Name, eff.OffensiveBuffs, eff.DefensiveBuffs)
+	globalLog(Basic, fmt.Sprintf("    [EFFECT APPLIED] %s to %s: %v %v", eff.Name, e.Name, eff.OffensiveBuffs, eff.DefensiveBuffs))
 }
 
 func (e *enemy) applyDoTEffect(eff dotEffect) {
 	e.DoTEffects = append(e.DoTEffects, eff)
 
-	fmt.Printf("    [DOT APPLIED] %s to %s [Base Damage:%d] [Rates:%.2f,%.2f]\n", eff.Name, e.Name, eff.BaseDamage, eff.CritChance, eff.DirectChance)
+	globalLog(Basic, fmt.Sprintf("    [DOT APPLIED] %s to %s [Base Damage:%d] [Rates:%.2f,%.2f]", eff.Name, e.Name, eff.BaseDamage, eff.CritChance, eff.DirectChance))
 }
 
 func (e *enemy) applyDamage(result *skillResult) {

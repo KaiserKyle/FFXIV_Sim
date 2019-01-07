@@ -242,5 +242,5 @@ func (p *playerCharacter) calculateGCD() float64 {
 func (p *playerCharacter) applyEffect(eff effect) {
 	p.Effects = append(p.Effects, eff)
 
-	fmt.Printf("    [BUFF APPLIED] %s to %s: %v %v\n", eff.Name, p.Name, eff.OffensiveBuffs, eff.DefensiveBuffs)
+	globalLog(Basic, fmt.Sprintf("    [BUFF APPLIED] %s to %s: %v %v", eff.Name, p.Name, eff.OffensiveBuffs, eff.DefensiveBuffs))
 }

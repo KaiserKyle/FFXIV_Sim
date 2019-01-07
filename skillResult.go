@@ -33,9 +33,9 @@ func (s *skillResult) Log() {
 	if s.DidDirect {
 		modifiers += "[DIRECT]"
 	}
-	fmt.Printf("[%06.2f] [%s -> %s] %s : %d %s\n", s.TimePerformed, s.PlayerName, s.TargetName, s.SkillName, s.DamageDone, modifiers)
+	globalLog(Basic, fmt.Sprintf("[%06.2f] [%s -> %s] %s : %d %s", s.TimePerformed, s.PlayerName, s.TargetName, s.SkillName, s.DamageDone, modifiers))
 	if s.DamageDone != 0 {
-		fmt.Printf("    [Base damage:%d] [Attack Buff:%.2fx] [Rates:%.2f,%.2f]\n", int(s.BaseDamageDone), s.DamageBuff, s.CritRate, s.DirectRate)
+		globalLog(Basic, fmt.Sprintf("    [Base damage:%d] [Attack Buff:%.2fx] [Rates:%.2f,%.2f]", int(s.BaseDamageDone), s.DamageBuff, s.CritRate, s.DirectRate))
 	}
 }
 

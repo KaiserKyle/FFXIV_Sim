@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"flag"
 	"fmt"
 	"io/ioutil"
 	"math"
@@ -13,6 +14,15 @@ var rng *rand.Rand
 var effectLibrary []effect
 var players []*playerCharacter
 var enemies []*enemy
+
+type logVerbosity int
+
+const (
+	Basic = iota
+	Important
+)
+
+var globalVerb logVerbosity
 
 type buffIndex int
 
@@ -49,21 +59,37 @@ type effect struct {
 	DoTPotency          int
 }
 
+func globalLog(verb logVerbosity, logString string) {
+	if verb >= globalVerb {
+		fmt.Println(logString)
+	}
+}
+
+func globalLogFloat(verb logVerbosity, logString string, floatVal float64) {
+	str := fmt.Sprintf("%f", floatVal)
+	globalLog(verb, logString+str)
+}
+
 func loadJSONFile(fileName string, obj interface{}) {
 	raw, err := ioutil.ReadFile(fileName)
 	if err != nil {
-		fmt.Println("JSON load error:", err)
+		globalLog(Important, "JSON load error: "+err.Error())
 	}
 
 	err = json.Unmarshal(raw, obj)
 	if err != nil {
-		fmt.Println("Unmarshal error: ", err)
+		globalLog(Important, "Unmarshal error: "+err.Error())
 	}
 }
 
 func main() {
 	rngSource := rand.NewSource(time.Now().UnixNano())
 	rng = rand.New(rngSource)
+
+	verbFlag := flag.Int("verbosity", 0, "Log Level")
+	flag.Parse()
+
+	globalVerb = logVerbosity(*verbFlag)
 
 	var player playerCharacter
 	var skills []playerSkill

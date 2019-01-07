@@ -1,6 +1,8 @@
 package main
 
-import "fmt"
+import (
+	"strconv"
+)
 
 const timeIncrement float64 = 0.01
 
@@ -58,11 +60,11 @@ func (s *simulator) Run() {
 		}
 	}
 
-	fmt.Printf("Total Damage Done: %d\n", totalDamageDone)
-	fmt.Printf("Time ellapsed: %f\n", timeEllapsed)
-	fmt.Printf("DPS: %f\n", float64(totalDamageDone)/timeEllapsed)
-	fmt.Printf("Skills performed: %d\n", currentSkillIndex)
-	fmt.Printf("Crit Rate: %.2f\n", float64(critCount)/float64(currentSkillIndex))
-	fmt.Printf("Direct Rate: %.2f\n", float64(directCount)/float64(currentSkillIndex))
-	fmt.Printf("CritDirect Rate: %.2f\n", float64(critDirectCount)/float64(currentSkillIndex))
+	globalLog(Important, "Total Damage Done: "+strconv.Itoa(totalDamageDone))
+	globalLogFloat(Important, "Time ellapsed: ", timeEllapsed)
+	globalLogFloat(Important, "DPS: ", float64(totalDamageDone)/timeEllapsed)
+	globalLog(Important, "Skills performed: "+strconv.Itoa(currentSkillIndex))
+	globalLogFloat(Important, "Crit Rate: ", float64(critCount)/float64(currentSkillIndex))
+	globalLogFloat(Important, "Direct Rate: ", float64(directCount)/float64(currentSkillIndex))
+	globalLogFloat(Important, "CritDirect Rate: ", float64(critDirectCount)/float64(currentSkillIndex))
 }
