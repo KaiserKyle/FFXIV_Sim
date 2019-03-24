@@ -1,0 +1,36 @@
+# FFXIV_Sim
+
+FFXIV Battle Simulator, meant to eventually be a complete simulator for all classes (and their interactions). 
+Long term project written in Go as an experiment to learn the language.
+
+Current Features: 
+- All Dragoon skills implemented
+- DoTs implemented
+- Short/Long animation locks
+- Full implementation of known damage formulas
+- Can be driven completely from JSON config files
+
+Future features:
+
+Short Term:
+- [ ] Multiple runs of a simulation: Collect statistical information after n number of runs of a simulation (Note: Will be better if unified logging is done first)
+- [ ] Positional damage: Currently all positionals are assumed to have been hit
+- [ ] Compare to striking dummy parse: In theory, solo Dragoon simulation should provide real results. Should take a striking dummy parse and compare notes
+- [ ] Role skills: Not as important to Dragoon, but important for other classes. Should find a way to keep role skills in their own JSON file and have the class tell us which role skills to load
+- [ ] Command line args: Currently compiling in options for testing
+- [ ] More robust rotation definition: Static listing of skills is very limiting
+    - [ ] Core rotation vs. GCD priorities?
+
+Long Term:
+- [ ] More classes
+- [ ] Download and run parse from FFLogs
+- [ ] Emnity measurements
+- [ ] Auto update core JSON files from web (when balance patches come out)
+
+Long Term Ideas:
+- [ ] Allow AI/ML algorithms to create rotation and test
+- [ ] Party synergy simulations, ability to look at actual contributions from support skills
+- [ ] Be able to compare two FFLogs and look for most significant differences
+- [ ] Enemy/full fight simulation
+- [ ] BiS Solver
+- [ ] Ability to use library on website?
