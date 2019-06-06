@@ -244,3 +244,11 @@ func (p *playerCharacter) applyEffect(eff effect) {
 
 	globalLog(Basic, fmt.Sprintf("    [BUFF APPLIED] %s to %s: %v %v", eff.Name, p.Name, eff.OffensiveBuffs, eff.DefensiveBuffs))
 }
+
+func (p *playerCharacter) reset() {
+	p.TotalTime = 0
+	for i := range p.Skills {
+		p.Skills[i].TimeRemainingOnCooldown = 0
+		p.Skills[i].OnCooldown = false
+	}
+}

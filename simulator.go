@@ -67,4 +67,5 @@ func (s *simulator) Run() {
 	globalLogFloat(Important, "Crit Rate: ", float64(critCount)/float64(currentSkillIndex))
 	globalLogFloat(Important, "Direct Rate: ", float64(directCount)/float64(currentSkillIndex))
 	globalLogFloat(Important, "CritDirect Rate: ", float64(critDirectCount)/float64(currentSkillIndex))
+	globalLog(Important, "")
 }

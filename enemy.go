@@ -88,3 +88,8 @@ func (e *enemy) advanceTime(span float64) *[]skillResult {
 
 	return nil
 }
+
+func (e *enemy) reset() {
+	e.DoTEffects = e.DoTEffects[:0]
+	e.TotalTime = 0
+}

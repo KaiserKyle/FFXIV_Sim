@@ -87,8 +87,12 @@ func main() {
 	rng = rand.New(rngSource)
 
 	verbFlag := flag.Int("verbosity", 0, "Log Level")
+	numIterations := flag.Int("iterations", 1, "Number of time to run the rotation file")
 	flag.Parse()
 
+	if *verbFlag >= 2 {
+		*verbFlag = 1
+	}
 	globalVerb = logVerbosity(*verbFlag)
 
 	var player playerCharacter
@@ -101,18 +105,23 @@ func main() {
 	loadJSONFile("./"+player.Class+".json", &skills)
 	loadJSONFile(player.RotationFile, &skillQueue)
 
-	if player.Class == "Dragoon" {
-		playerStance = new(dragoonStance)
-	}
-	player.Skills = skills
-	player.PlayerStance = playerStance
-	players = append(players, &player)
-
 	enemy := enemy{"Dummy A", 99999999, 0, nil, nil, 0.0}
 	enemies = append(enemies, &enemy)
 
-	sim := simulator{players, enemies, skillQueue}
-	sim.Run()
+	player.Skills = skills
+	players = append(players, &player)
+
+	for i := 0; i < *numIterations; i++ {
+		if player.Class == "Dragoon" {
+			playerStance = new(dragoonStance)
+		}
+		player.PlayerStance = playerStance
+		player.reset()
+		enemy.reset()
+
+		sim := simulator{players, enemies, skillQueue}
+		sim.Run()
+	}
 }
 
 // global function to apply additional effects
