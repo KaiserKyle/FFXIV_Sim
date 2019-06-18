@@ -101,6 +101,7 @@ func (p *playerCharacter) performAction(skillName string, enemyData *enemy) *ski
 			}
 
 			result.SkillName = skillName
+			result.SkillIndex = i
 			result.PlayerName = p.Name
 			result.TargetName = enemyData.Name
 			result.TimePerformed = p.TotalTime
@@ -247,6 +248,7 @@ func (p *playerCharacter) applyEffect(eff effect) {
 
 func (p *playerCharacter) reset() {
 	p.TotalTime = 0
+	p.PlayerStance.reset()
 	for i := range p.Skills {
 		p.Skills[i].TimeRemainingOnCooldown = 0
 		p.Skills[i].OnCooldown = false

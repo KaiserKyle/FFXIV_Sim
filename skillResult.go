@@ -7,6 +7,7 @@ import (
 
 type skillResult struct {
 	SkillName      string
+	SkillIndex     int
 	DamageDone     int
 	BaseDamageDone float64
 	DidCrit        bool

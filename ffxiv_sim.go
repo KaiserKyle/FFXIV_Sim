@@ -70,6 +70,11 @@ func globalLogFloat(verb logVerbosity, logString string, floatVal float64) {
 	globalLog(verb, logString+str)
 }
 
+func globalLogIntSlice(verb logVerbosity, logString string, intSlice []int) {
+	str := fmt.Sprintf("%v", intSlice)
+	globalLog(verb, logString+str)
+}
+
 func loadJSONFile(fileName string, obj interface{}) {
 	raw, err := ioutil.ReadFile(fileName)
 	if err != nil {
@@ -111,16 +116,18 @@ func main() {
 	player.Skills = skills
 	players = append(players, &player)
 
+	if player.Class == "Dragoon" {
+		playerStance = new(dragoonStance)
+	}
+	player.PlayerStance = playerStance
+
 	for i := 0; i < *numIterations; i++ {
-		if player.Class == "Dragoon" {
-			playerStance = new(dragoonStance)
-		}
-		player.PlayerStance = playerStance
 		player.reset()
 		enemy.reset()
 
 		sim := simulator{players, enemies, skillQueue}
-		sim.Run()
+		result := sim.Run()
+		result.log()
 	}
 }
 

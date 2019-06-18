@@ -4,6 +4,7 @@ import "strconv"
 
 type stance interface {
 	activate()
+	reset()
 	isActive() bool
 	advanceTime(float64)
 	processSkillExecution(*skillResult) string
@@ -26,6 +27,12 @@ func (d *dragoonStance) activate() {
 	d.Stacks = 0
 
 	globalLog(Basic, "[STANCE ACTIVATED] "+d.Name)
+}
+
+func (d *dragoonStance) reset() {
+	d.Timer = 0
+	d.Active = false
+	d.Stacks = 0
 }
 
 func (d *dragoonStance) isActive() bool {

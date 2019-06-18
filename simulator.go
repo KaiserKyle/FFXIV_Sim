@@ -12,13 +12,26 @@ type simulator struct {
 	SkillQueue []string
 }
 
-func (s *simulator) Run() {
+type simResult struct {
+	skillCount      int
+	critCount       int
+	directCount     int
+	critDirectCount int
+	totalDamageDone int
+	timeEllapsed    float64
+	skillsPerformed []int
+}
+
+func (s *simulator) Run() simResult {
 	currentSkillIndex := 0
-	critCount := 0
-	directCount := 0
-	critDirectCount := 0
-	totalDamageDone := 0
-	timeEllapsed := 0.0
+	var totalResult simResult
+	totalResult.skillCount = 0
+	totalResult.critCount = 0
+	totalResult.directCount = 0
+	totalResult.critDirectCount = 0
+	totalResult.totalDamageDone = 0
+	totalResult.timeEllapsed = 0.0
+	totalResult.skillsPerformed = make([]int, len(s.Players[0].Skills))
 
 	for currentSkillIndex < len(s.SkillQueue) {
 		for i := range s.Players {
@@ -28,44 +41,51 @@ func (s *simulator) Run() {
 				enemies[0].applyDamage(result)
 				result.Log()
 				result.ApplyBuffs(*s.Players[i])
-				totalDamageDone += result.DamageDone
+				totalResult.totalDamageDone += result.DamageDone
 				if result.DidCrit {
-					critCount++
+					totalResult.critCount++
 				}
 				if result.DidDirect {
-					directCount++
+					totalResult.directCount++
 				}
 				if result.DidCrit && result.DidDirect {
-					critDirectCount++
+					totalResult.critDirectCount++
 				}
 			}
-			timeEllapsed += timeIncrement
+			totalResult.timeEllapsed += timeIncrement
 			result = s.Players[i].performAction(s.SkillQueue[currentSkillIndex], enemies[0])
 			if result != nil {
 				enemies[0].applyDamage(result)
 				result.Log()
 				result.ApplyBuffs(*s.Players[i])
-				totalDamageDone += result.DamageDone
+				totalResult.totalDamageDone += result.DamageDone
+				totalResult.skillsPerformed[result.SkillIndex]++
 				currentSkillIndex++
+				totalResult.skillCount++
 				if result.DidCrit {
-					critCount++
+					totalResult.critCount++
 				}
 				if result.DidDirect {
-					directCount++
+					totalResult.directCount++
 				}
 				if result.DidCrit && result.DidDirect {
-					critDirectCount++
+					totalResult.critDirectCount++
 				}
 			}
 		}
 	}
 
-	globalLog(Important, "Total Damage Done: "+strconv.Itoa(totalDamageDone))
-	globalLogFloat(Important, "Time ellapsed: ", timeEllapsed)
-	globalLogFloat(Important, "DPS: ", float64(totalDamageDone)/timeEllapsed)
-	globalLog(Important, "Skills performed: "+strconv.Itoa(currentSkillIndex))
-	globalLogFloat(Important, "Crit Rate: ", float64(critCount)/float64(currentSkillIndex))
-	globalLogFloat(Important, "Direct Rate: ", float64(directCount)/float64(currentSkillIndex))
-	globalLogFloat(Important, "CritDirect Rate: ", float64(critDirectCount)/float64(currentSkillIndex))
+	return totalResult
+}
+
+func (s *simResult) log() {
+	globalLog(Important, "Total Damage Done: "+strconv.Itoa(s.totalDamageDone))
+	globalLogFloat(Important, "Time ellapsed: ", s.timeEllapsed)
+	globalLogFloat(Important, "DPS: ", float64(s.totalDamageDone)/s.timeEllapsed)
+	globalLog(Important, "Skills performed: "+strconv.Itoa(s.skillCount))
+	globalLogFloat(Important, "Crit Rate: ", float64(s.critCount)/float64(s.skillCount))
+	globalLogFloat(Important, "Direct Rate: ", float64(s.directCount)/float64(s.skillCount))
+	globalLogFloat(Important, "CritDirect Rate: ", float64(s.critDirectCount)/float64(s.skillCount))
+	globalLogIntSlice(Important, "Skill Counts: ", s.skillsPerformed)
 	globalLog(Important, "")
 }
