@@ -71,33 +71,8 @@ func (p *playerCharacter) performAction(skillName string, enemyData *enemy) *ski
 
 	for i := range p.Skills {
 		if p.Skills[i].Name == skillName {
-			// If we are still on GCD cooldown, no Weaponskills allowed
-			if p.Skills[i].IsWeaponskill && p.IsGCDOnCooldown {
+			if !p.isSkillAvailable(skillName) {
 				return nil
-			}
-			// If the skill is on cooldown, we can't use it
-			if p.Skills[i].OnCooldown {
-				return nil
-			}
-			// If the skill requires the player's stance to be active and the stance is
-			// not active, do nothing
-			if p.Skills[i].CheckStance && !p.PlayerStance.checkSkill(skillName) {
-				return nil
-			}
-			// If a skill requires an additional effect to be active and we do not have
-			// that effect active, do nothing
-			if p.Skills[i].RequiredEffect != "" {
-				haveRequiredEffect := false
-				for j := range p.Effects {
-					if p.Effects[j].Name == p.Skills[i].RequiredEffect {
-						haveRequiredEffect = true
-						break
-					}
-				}
-
-				if !haveRequiredEffect {
-					return nil
-				}
 			}
 
 			result.SkillName = skillName
@@ -247,10 +222,65 @@ func (p *playerCharacter) applyEffect(eff effect) {
 }
 
 func (p *playerCharacter) reset() {
-	p.TotalTime = 0
+	p.TotalTime = 0.0
+	p.AutoAttackTimeRemaining = 0.0
+	p.GCDTimeRemaining = 0.0
+	p.IsGCDOnCooldown = false
+	p.AnimationLock = 0.0
 	p.PlayerStance.reset()
 	for i := range p.Skills {
-		p.Skills[i].TimeRemainingOnCooldown = 0
+		p.Skills[i].TimeRemainingOnCooldown = 0.0
 		p.Skills[i].OnCooldown = false
 	}
+}
+
+func (p *playerCharacter) getSkillsAvailable() []bool {
+	skillAvailable := make([]bool, len(p.Skills))
+	for i := range p.Skills {
+		if p.Skills[i].IsWeaponskill {
+			skillAvailable[i] = !p.IsGCDOnCooldown
+		} else {
+			skillAvailable[i] = !p.Skills[i].OnCooldown
+		}
+	}
+
+	return skillAvailable
+}
+
+func (p *playerCharacter) isSkillAvailable(name string) bool {
+	for i := range p.Skills {
+		if p.Skills[i].Name == name {
+			// If we are still on GCD cooldown, no Weaponskills allowed
+			if p.Skills[i].IsWeaponskill && p.IsGCDOnCooldown {
+				return false
+			}
+			// If the skill is on cooldown, we can't use it
+			if p.Skills[i].OnCooldown {
+				return false
+			}
+			// If the skill requires the player's stance to be active and the stance is
+			// not active, do nothing
+			if p.Skills[i].CheckStance && !p.PlayerStance.checkSkill(name) {
+				return false
+			}
+			// If a skill requires an additional effect to be active and we do not have
+			// that effect active, do nothing
+			if p.Skills[i].RequiredEffect != "" {
+				haveRequiredEffect := false
+				for j := range p.Effects {
+					if p.Effects[j].Name == p.Skills[i].RequiredEffect {
+						haveRequiredEffect = true
+						break
+					}
+				}
+
+				if !haveRequiredEffect {
+					return false
+				}
+			}
+			return true
+		}
+	}
+	// Unknown skill name
+	return false
 }

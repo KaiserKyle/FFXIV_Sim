@@ -38,7 +38,9 @@ func (e *enemy) applyDamage(result *skillResult) {
 	}
 }
 
-func (e *enemy) advanceTime(span float64) *[]skillResult {
+func (e *enemy) advanceTime(span float64) []skillResult {
+	var results []skillResult
+
 	e.TotalTime += span
 
 	// Check for DoTs
@@ -58,7 +60,8 @@ func (e *enemy) advanceTime(span float64) *[]skillResult {
 			result.TimePerformed = e.TotalTime
 
 			result.calculateDoTTick(e.DoTEffects[i])
-			result.Log()
+
+			results = append(results, *result)
 		}
 	}
 
@@ -86,7 +89,7 @@ func (e *enemy) advanceTime(span float64) *[]skillResult {
 
 	e.DoTEffects = e.DoTEffects[:buffCount]
 
-	return nil
+	return results
 }
 
 func (e *enemy) reset() {

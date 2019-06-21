@@ -121,12 +121,13 @@ func main() {
 	}
 	player.PlayerStance = playerStance
 
+	sim := simulator{players, enemies}
+
 	for i := 0; i < *numIterations; i++ {
 		player.reset()
 		enemy.reset()
 
-		sim := simulator{players, enemies, skillQueue}
-		result := sim.Run()
+		result := sim.RunSkillQueue(skillQueue)
 		result.log()
 	}
 }

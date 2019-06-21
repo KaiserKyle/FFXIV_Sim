@@ -7,9 +7,8 @@ import (
 const timeIncrement float64 = 0.01
 
 type simulator struct {
-	Players    []*playerCharacter
-	Enemies    []*enemy
-	SkillQueue []string
+	Players []*playerCharacter
+	Enemies []*enemy
 }
 
 type simResult struct {
@@ -20,9 +19,11 @@ type simResult struct {
 	totalDamageDone int
 	timeEllapsed    float64
 	skillsPerformed []int
+	autoAttacks     int
+	dotTicks        int
 }
 
-func (s *simulator) Run() simResult {
+func (s *simulator) RunSkillQueue(SkillQueue []string) simResult {
 	currentSkillIndex := 0
 	var totalResult simResult
 	totalResult.skillCount = 0
@@ -33,12 +34,26 @@ func (s *simulator) Run() simResult {
 	totalResult.timeEllapsed = 0.0
 	totalResult.skillsPerformed = make([]int, len(s.Players[0].Skills))
 
-	for currentSkillIndex < len(s.SkillQueue) {
+	for currentSkillIndex < len(SkillQueue) {
 		for i := range s.Players {
-			enemies[0].advanceTime(timeIncrement)
-			result := s.Players[i].advanceTime(timeIncrement, enemies[0])
-			if result != nil {
-				enemies[0].applyDamage(result)
+			results := enemies[0].advanceTime(timeIncrement)
+			if results != nil {
+				totalResult.dotTicks += len(results)
+			}
+
+			// First advance time to take care of Dots, Cooldowns, and Autos
+			timeResult := s.Players[i].advanceTime(timeIncrement, enemies[0])
+
+			if timeResult != nil {
+				totalResult.autoAttacks++
+				if results != nil {
+					results = append(results, *timeResult)
+				} else {
+					results = []skillResult{*timeResult}
+				}
+			}
+			for i, result := range results {
+				enemies[0].applyDamage(&result)
 				result.Log()
 				result.ApplyBuffs(*s.Players[i])
 				totalResult.totalDamageDone += result.DamageDone
@@ -53,22 +68,24 @@ func (s *simulator) Run() simResult {
 				}
 			}
 			totalResult.timeEllapsed += timeIncrement
-			result = s.Players[i].performAction(s.SkillQueue[currentSkillIndex], enemies[0])
-			if result != nil {
-				enemies[0].applyDamage(result)
-				result.Log()
-				result.ApplyBuffs(*s.Players[i])
-				totalResult.totalDamageDone += result.DamageDone
-				totalResult.skillsPerformed[result.SkillIndex]++
+
+			// Next attempt to perform the next action in the queue
+			actionResult := s.Players[i].performAction(SkillQueue[currentSkillIndex], enemies[0])
+			if actionResult != nil {
+				enemies[0].applyDamage(actionResult)
+				actionResult.Log()
+				actionResult.ApplyBuffs(*s.Players[i])
+				totalResult.totalDamageDone += actionResult.DamageDone
+				totalResult.skillsPerformed[actionResult.SkillIndex]++
 				currentSkillIndex++
 				totalResult.skillCount++
-				if result.DidCrit {
+				if actionResult.DidCrit {
 					totalResult.critCount++
 				}
-				if result.DidDirect {
+				if actionResult.DidDirect {
 					totalResult.directCount++
 				}
-				if result.DidCrit && result.DidDirect {
+				if actionResult.DidCrit && actionResult.DidDirect {
 					totalResult.critDirectCount++
 				}
 			}
@@ -87,5 +104,7 @@ func (s *simResult) log() {
 	globalLogFloat(Important, "Direct Rate: ", float64(s.directCount)/float64(s.skillCount))
 	globalLogFloat(Important, "CritDirect Rate: ", float64(s.critDirectCount)/float64(s.skillCount))
 	globalLogIntSlice(Important, "Skill Counts: ", s.skillsPerformed)
+	globalLogFloat(Important, "Auto Attacks: ", float64(s.autoAttacks))
+	globalLogFloat(Important, "DoT Ticks: ", float64(s.dotTicks))
 	globalLog(Important, "")
 }
