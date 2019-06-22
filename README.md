@@ -10,6 +10,9 @@ Current Features:
 - Full implementation of known damage formulas
 - Can be driven completely from JSON config files
 
+sample_parse.log is a striking dummy parse used to test out the accuracy of the sim. For reference, the parse was uploaded here:
+https://www.fflogs.com/reports/CMbytWvczFd1A8wj/#fight=3
+
 Future features:
 
 Short Term:

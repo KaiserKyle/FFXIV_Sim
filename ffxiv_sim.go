@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"math"
 	"math/rand"
+	"os"
 	"time"
 )
 
@@ -87,12 +88,21 @@ func loadJSONFile(fileName string, obj interface{}) {
 	}
 }
 
+func loadTextFile(fileName string) *os.File {
+	file, err := os.Open(fileName)
+	if err != nil {
+		globalLog(Important, "Text load error: "+err.Error())
+	}
+	return file
+}
+
 func main() {
 	rngSource := rand.NewSource(time.Now().UnixNano())
 	rng = rand.New(rngSource)
 
 	verbFlag := flag.Int("verbosity", 0, "Log Level")
 	numIterations := flag.Int("iterations", 1, "Number of time to run the rotation file")
+	validateParse := flag.String("parse", "", "Parse to be validated against simulator")
 	flag.Parse()
 
 	if *verbFlag >= 2 {
@@ -123,12 +133,18 @@ func main() {
 
 	sim := simulator{players, enemies}
 
-	for i := 0; i < *numIterations; i++ {
-		player.reset()
-		enemy.reset()
+	if *validateParse != "" {
+		fmt.Println("Reading Parse:", *validateParse)
+		reader := parseReader{}
+		reader.loadParseFile(*validateParse)
+	} else {
+		for i := 0; i < *numIterations; i++ {
+			player.reset()
+			enemy.reset()
 
-		result := sim.RunSkillQueue(skillQueue)
-		result.log()
+			result := sim.RunSkillQueue(skillQueue)
+			result.log()
+		}
 	}
 }
 
