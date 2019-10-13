@@ -21,7 +21,7 @@ type dragoonStance struct {
 }
 
 func (d *dragoonStance) activate() {
-	d.Name = "Blood of the Dragon"
+	d.Name = "Blood Of The Dragon"
 	d.Timer = 20.0
 	d.Active = true
 	d.Stacks = 0
@@ -45,11 +45,11 @@ func (d *dragoonStance) advanceTime(span float64) {
 	}
 
 	if d.Active && d.Timer <= 0.0 {
-		if d.Name == "Blood of the Dragon" {
+		if d.Name == "Blood Of The Dragon" {
 			d.Active = false
 			globalLog(Basic, "[STANCE DEACTIVATED] "+d.Name)
 		} else {
-			d.Name = "Blood of the Dragon"
+			d.Name = "Blood Of The Dragon"
 			d.Timer = 20.0
 			globalLog(Basic, "[STANCE DEMOTED] "+d.Name)
 		}
@@ -57,14 +57,14 @@ func (d *dragoonStance) advanceTime(span float64) {
 }
 
 func (d *dragoonStance) checkSkill(skillName string) bool {
-	if skillName == "Blood of the Dragon" {
-		if d.Active && d.Name == "Life of the Dragon" {
+	if skillName == "Blood Of The Dragon" {
+		if d.Active && d.Name == "Life Of The Dragon" {
 			return false
 		}
 		return true
 	}
 	if d.Active {
-		if skillName == "Nastrond" && d.Name != "Life of the Dragon" {
+		if skillName == "Nastrond" && d.Name != "Life Of The Dragon" {
 			return false
 		}
 		return true
@@ -85,13 +85,13 @@ func (d *dragoonStance) checkPotencyBoost(skillName string) float64 {
 func (d *dragoonStance) processSkillExecution(result *skillResult) string {
 	if d.Active {
 		if result.SkillName == "Full Thrust" && result.IsCombo {
-			return "Sharper Fang and Claw"
+			return "Sharper Fang And Claw"
 		} else if result.SkillName == "Chaos Thrust" && result.IsCombo {
 			return "Enhanced Wheeling Thrust"
-		} else if result.SkillName == "Fang and Claw" && !result.IsCombo {
+		} else if result.SkillName == "Fang And Claw" && !result.IsCombo {
 			return "Enhanced Wheeling Thrust"
 		} else if result.SkillName == "Wheeling Thrust" && !result.IsCombo {
-			return "Sharper Fang and Claw"
+			return "Sharper Fang And Claw"
 		}
 	}
 
@@ -101,15 +101,15 @@ func (d *dragoonStance) processSkillExecution(result *skillResult) string {
 // Skills that cause a change in the stance will alert the stance when they
 // are executed, allowing the stance to execute special logic
 func (d *dragoonStance) alertSkill(skillName string) {
-	if d.Active && d.Name == "Blood of the Dragon" {
-		if skillName == "Fang and Claw" || skillName == "Wheeling Thrust" || skillName == "Sonic Thrust" {
+	if d.Active && d.Name == "Blood Of The Dragon" {
+		if skillName == "Fang And Claw" || skillName == "Wheeling Thrust" || skillName == "Sonic Thrust" {
 			d.Timer += 10.0
 			if d.Timer > 30.0 {
 				d.Timer = 30.0
 			}
 			globalLogFloat(Basic, "[STANCE TIMER INCREASED] ", d.Timer)
 		} else if skillName == "Geirskogul" && d.Stacks == 3 {
-			d.Name = "Life of the Dragon"
+			d.Name = "Life Of The Dragon"
 			d.Stacks = 0
 			if d.Timer < 20.0 {
 				d.Timer = 20.0

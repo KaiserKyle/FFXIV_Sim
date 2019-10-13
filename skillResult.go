@@ -29,7 +29,7 @@ func (s *skillResult) Log() {
 		modifiers += "[COMBO]"
 	}
 	if s.DidCrit {
-		modifiers += "[CRIT]"
+		modifiers += fmt.Sprintf("[CRITx%.2fx]", s.CritMultiplier)
 	}
 	if s.DidDirect {
 		modifiers += "[DIRECT]"

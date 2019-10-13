@@ -1,10 +1,10 @@
 {"Name":"Kaiser Kyle",
     "Class":"Dragoon",
     "RotationFile":"./rotation.json",
-    "WeaponDamage": 108,
+    "WeaponDamage": 109,
     "WeaponDelay": 2.80,
-    "AttackPower": 3203,
-    "CriticalHit": 1620,
-    "DirectHit": 1119,
-    "Determination": 1333,
-    "SkillSpeed": 2305}
+    "AttackPower": 3241,
+    "CriticalHit": 2137,
+    "DirectHit": 769,
+    "Determination": 1128,
+    "SkillSpeed": 2329}

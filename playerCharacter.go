@@ -9,11 +9,12 @@ const level70Sub int = 364
 const level70Div int = 2170
 const level70Main int = 292
 const level70DrgStr int = 115
+const level70ActionDelay int = 2500
 
 const directBonus float64 = 1.2
 
 const animationLock float64 = 0.75
-const longAnimationLock float64 = 1.50
+const longAnimationLock float64 = 1.30
 
 const autoAttackPot float64 = 110.0 / 100.0
 
@@ -205,7 +206,7 @@ func (p *playerCharacter) advanceTime(span float64, targettedEnemy *enemy) *skil
 
 // INCOMPLETE: Need to implement proper buffs here, mostly zeroes right now
 func (p *playerCharacter) calculateGCD() float64 {
-	msGCD := math.Floor((1000.0 - math.Floor(130.0*(float64(p.SkillSpeed)-float64(level70Sub))/float64(level70Div))) * float64(p.WeaponDelay*1000) / 1000.0)
+	msGCD := math.Floor((1000.0 - math.Floor(130.0*(float64(p.SkillSpeed)-float64(level70Sub))/float64(level70Div))) * float64(level70ActionDelay) / 1000.0)
 
 	a := math.Floor(math.Floor(math.Floor((100.0-0.0)*(100.0-0.0)/100.0)*(100-0)/100) - 0)
 	b := (0.0 - 100.0) / -100.0
@@ -216,7 +217,19 @@ func (p *playerCharacter) calculateGCD() float64 {
 }
 
 func (p *playerCharacter) applyEffect(eff effect) {
-	p.Effects = append(p.Effects, eff)
+	effectAlreadyApplied := false
+	for i := range p.Effects {
+		if p.Effects[i].Name == eff.Name {
+			// Note: Do NOT reset TimeToNextTick
+			effectAlreadyApplied = true
+			p.Effects[i].Duration = eff.Duration
+			p.Effects[i].TimeLeft = eff.TimeLeft
+		}
+	}
+
+	if !effectAlreadyApplied {
+		p.Effects = append(p.Effects, eff)
+	}
 
 	globalLog(Basic, fmt.Sprintf("    [BUFF APPLIED] %s to %s: %v %v", eff.Name, p.Name, eff.OffensiveBuffs, eff.DefensiveBuffs))
 }

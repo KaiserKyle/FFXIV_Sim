@@ -15,13 +15,40 @@ type enemy struct {
 }
 
 func (e *enemy) applyEffect(eff effect) {
-	e.Effects = append(e.Effects, eff)
+	effectAlreadyApplied := false
+	for i := range e.Effects {
+		if e.Effects[i].Name == eff.Name {
+			// Note: Do NOT reset TimeToNextTick
+			effectAlreadyApplied = true
+			e.Effects[i].Duration = eff.Duration
+			e.Effects[i].TimeLeft = eff.TimeLeft
+		}
+	}
+
+	if !effectAlreadyApplied {
+		e.Effects = append(e.Effects, eff)
+	}
 
 	globalLog(Basic, fmt.Sprintf("    [EFFECT APPLIED] %s to %s: %v %v", eff.Name, e.Name, eff.OffensiveBuffs, eff.DefensiveBuffs))
 }
 
 func (e *enemy) applyDoTEffect(eff dotEffect) {
-	e.DoTEffects = append(e.DoTEffects, eff)
+	dotAlreadyApplied := false
+	for i := range e.DoTEffects {
+		if e.DoTEffects[i].PlayerName == eff.PlayerName && e.DoTEffects[i].Name == eff.Name {
+			// Note: Do NOT reset TimeToNextTick
+			dotAlreadyApplied = true
+			e.DoTEffects[i].Duration = eff.Duration
+			e.DoTEffects[i].BaseDamage = eff.BaseDamage
+			e.DoTEffects[i].CritChance = eff.CritChance
+			e.DoTEffects[i].CritDamage = eff.CritDamage
+			e.DoTEffects[i].DirectChance = eff.DirectChance
+		}
+	}
+
+	if !dotAlreadyApplied {
+		e.DoTEffects = append(e.DoTEffects, eff)
+	}
 
 	globalLog(Basic, fmt.Sprintf("    [DOT APPLIED] %s to %s [Base Damage:%d] [Rates:%.2f,%.2f]", eff.Name, e.Name, eff.BaseDamage, eff.CritChance, eff.DirectChance))
 }
@@ -94,5 +121,6 @@ func (e *enemy) advanceTime(span float64) []skillResult {
 
 func (e *enemy) reset() {
 	e.DoTEffects = e.DoTEffects[:0]
+	e.Effects = e.Effects[:0]
 	e.TotalTime = 0
 }
