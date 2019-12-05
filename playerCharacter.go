@@ -5,11 +5,11 @@ import (
 	"math"
 )
 
-const level70Sub int = 364
-const level70Div int = 2170
-const level70Main int = 292
-const level70DrgStr int = 115
-const level70ActionDelay int = 2500
+const level80Sub int = 380
+const level80Div int = 3300
+const level80Main int = 340
+const level80DrgStr int = 115
+const level80ActionDelay int = 2500
 
 const directBonus float64 = 1.2
 
@@ -45,7 +45,7 @@ type playerSkill struct {
 	Potency                 int
 	IsWeaponskill           bool
 	CooldownSeconds         int
-	ComboAction             string
+	ComboAction             []string
 	ComboPotency            int
 	AdditionalEffectName    string
 	ComboEffect             string
@@ -206,7 +206,7 @@ func (p *playerCharacter) advanceTime(span float64, targettedEnemy *enemy) *skil
 
 // INCOMPLETE: Need to implement proper buffs here, mostly zeroes right now
 func (p *playerCharacter) calculateGCD() float64 {
-	msGCD := math.Floor((1000.0 - math.Floor(130.0*(float64(p.SkillSpeed)-float64(level70Sub))/float64(level70Div))) * float64(level70ActionDelay) / 1000.0)
+	msGCD := math.Floor((1000.0 - math.Floor(130.0*(float64(p.SkillSpeed)-float64(level80Sub))/float64(level80Div))) * float64(level80ActionDelay) / 1000.0)
 
 	a := math.Floor(math.Floor(math.Floor((100.0-0.0)*(100.0-0.0)/100.0)*(100-0)/100) - 0)
 	b := (0.0 - 100.0) / -100.0

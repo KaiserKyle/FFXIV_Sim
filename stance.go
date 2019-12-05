@@ -22,7 +22,7 @@ type dragoonStance struct {
 
 func (d *dragoonStance) activate() {
 	d.Name = "Blood Of The Dragon"
-	d.Timer = 20.0
+	d.Timer = 30.0
 	d.Active = true
 	d.Stacks = 0
 
@@ -50,7 +50,7 @@ func (d *dragoonStance) advanceTime(span float64) {
 			globalLog(Basic, "[STANCE DEACTIVATED] "+d.Name)
 		} else {
 			d.Name = "Blood Of The Dragon"
-			d.Timer = 20.0
+			d.Timer = 30.0
 			globalLog(Basic, "[STANCE DEMOTED] "+d.Name)
 		}
 	}
@@ -67,6 +67,9 @@ func (d *dragoonStance) checkSkill(skillName string) bool {
 		if skillName == "Nastrond" && d.Name != "Life Of The Dragon" {
 			return false
 		}
+		if skillName == "Stardiver" && d.Name != "Life Of The Dragon" {
+			return false
+		}
 		return true
 	}
 	return false
@@ -74,7 +77,7 @@ func (d *dragoonStance) checkSkill(skillName string) bool {
 
 func (d *dragoonStance) checkPotencyBoost(skillName string) float64 {
 	if d.Active {
-		if skillName == "Jump" || skillName == "Spineshatter Dive" {
+		if skillName == "High Jump" || skillName == "Spineshatter Dive" {
 			return 1.30
 		}
 	}
@@ -102,25 +105,23 @@ func (d *dragoonStance) processSkillExecution(result *skillResult) string {
 // are executed, allowing the stance to execute special logic
 func (d *dragoonStance) alertSkill(skillName string) {
 	if d.Active && d.Name == "Blood Of The Dragon" {
-		if skillName == "Fang And Claw" || skillName == "Wheeling Thrust" || skillName == "Sonic Thrust" {
+		if skillName == "Fang And Claw" || skillName == "Wheeling Thrust" || skillName == "Sonic Thrust" || skillName == "Coerthan Torment" {
 			d.Timer += 10.0
 			if d.Timer > 30.0 {
 				d.Timer = 30.0
 			}
 			globalLogFloat(Basic, "[STANCE TIMER INCREASED] ", d.Timer)
-		} else if skillName == "Geirskogul" && d.Stacks == 3 {
+		} else if skillName == "Geirskogul" && d.Stacks == 2 {
 			d.Name = "Life Of The Dragon"
 			d.Stacks = 0
-			if d.Timer < 20.0 {
-				d.Timer = 20.0
-			}
+			d.Timer = 30.0
 			globalLog(Basic, "[STANCE PROMOTED] "+d.Name)
 		}
 	}
 	if d.Active && skillName == "Mirage Dive" {
 		d.Stacks++
-		if d.Stacks > 3 {
-			d.Stacks = 3
+		if d.Stacks > 2 {
+			d.Stacks = 2
 		}
 		globalLog(Basic, "[STANCE STACKS INCREASED] "+strconv.Itoa(d.Stacks))
 	}

@@ -99,9 +99,13 @@ func (s *skillResult) calculateDamage(skill *playerSkill, playerData playerChara
 func (s *skillResult) calculatePotency(skill *playerSkill, lastWeaponSkill string, potencyBoost float64) {
 	isCombo := false
 	pot := skill.Potency
-	if skill.IsWeaponskill && skill.ComboAction != "" && lastWeaponSkill == skill.ComboAction {
-		isCombo = true
-		pot = skill.ComboPotency
+	if skill.IsWeaponskill && len(skill.ComboAction) > 0 {
+		for _, comboAct := range skill.ComboAction {
+			if lastWeaponSkill == comboAct {
+				isCombo = true
+				pot = skill.ComboPotency
+			}
+		}
 	}
 
 	s.BaseDamageDone = float64(pot) / 100.0 * potencyBoost
@@ -109,7 +113,7 @@ func (s *skillResult) calculatePotency(skill *playerSkill, lastWeaponSkill strin
 }
 
 func (s *skillResult) appendWeaponDamage(autoAttack bool, weaponDamage int, weaponDelay float64) {
-	wd := math.Floor((float64(level70Main) * float64(level70DrgStr) / 1000.0) + float64(weaponDamage))
+	wd := math.Floor((float64(level80Main) * float64(level80DrgStr) / 1000.0) + float64(weaponDamage))
 	if autoAttack {
 		wd = math.Floor(wd * (weaponDelay / 3))
 	}
@@ -118,17 +122,17 @@ func (s *skillResult) appendWeaponDamage(autoAttack bool, weaponDamage int, weap
 }
 
 func (s *skillResult) appendAttackPower(attackPower int) {
-	ap := math.Floor((125*(float64(attackPower)-292)/292)+100.0) / 100.0
+	ap := math.Floor((165*(float64(attackPower)-340)/340)+100.0) / 100.0
 	s.BaseDamageDone *= ap
 }
 
 func (s *skillResult) appendDetermination(determination int) {
-	det := math.Floor(130.0*(float64(determination)-float64(level70Main))/float64(level70Div)+1000) / 1000.0
+	det := math.Floor(130.0*(float64(determination)-float64(level80Main))/float64(level80Div)+1000) / 1000.0
 	s.BaseDamageDone *= det
 }
 
 func (s *skillResult) appendSkillSpeed(skillSpeed int) {
-	ss := math.Floor(130.0*(float64(skillSpeed)-float64(level70Sub))/float64(level70Div)+1000) / 1000.0
+	ss := math.Floor(130.0*(float64(skillSpeed)-float64(level80Sub))/float64(level80Div)+1000) / 1000.0
 	s.BaseDamageDone *= ss
 }
 
@@ -164,8 +168,8 @@ func (s *skillResult) calculateCritRateBuff(isWeaponSkill bool, effects []effect
 
 // Returns (crit bonus)
 func (s *skillResult) calculateCritRate(criticalHit int) float64 {
-	s.CritRate = math.Floor(200*((float64(criticalHit)-float64(level70Sub))/float64(level70Div))+50.0) / 10.0
-	critBonus := math.Floor(200*(float64(criticalHit)-float64(level70Sub))/float64(level70Div)+1400) / 1000.0
+	s.CritRate = math.Floor(200*((float64(criticalHit)-float64(level80Sub))/float64(level80Div))+50.0) / 10.0
+	critBonus := math.Floor(200*(float64(criticalHit)-float64(level80Sub))/float64(level80Div)+1400) / 1000.0
 	return critBonus
 }
 
@@ -176,14 +180,14 @@ func (s *skillResult) calculateDirect(directHit int) float64 {
 
 	if s.DirectRate >= directRng {
 		s.DidDirect = true
-		return 1.2
+		return 1.25
 	}
 	s.DidDirect = false
 	return 1.0
 }
 
 func (s *skillResult) calculateDirectRate(directHit int) {
-	s.DirectRate = math.Floor(550*((float64(directHit)-float64(level70Sub))/float64(level70Div))) / 10.0
+	s.DirectRate = math.Floor(550*((float64(directHit)-float64(level80Sub))/float64(level80Div))) / 10.0
 }
 
 // Attack buffs are multiplicative

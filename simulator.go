@@ -21,6 +21,7 @@ type simResult struct {
 	skillsPerformed []int
 	autoAttacks     int
 	dotTicks        int
+	totalHits       int
 }
 
 func (s *simulator) RunSkillQueue(SkillQueue []string) simResult {
@@ -51,6 +52,7 @@ func (s *simulator) RunSkillQueue(SkillQueue []string) simResult {
 				result.Log()
 				result.ApplyBuffs(*s.Players[i])
 				totalResult.totalDamageDone += result.DamageDone
+				totalResult.totalHits++
 				if result.DidCrit {
 					totalResult.critCount++
 				}
@@ -73,6 +75,7 @@ func (s *simulator) RunSkillQueue(SkillQueue []string) simResult {
 				totalResult.skillsPerformed[actionResult.SkillIndex]++
 				currentSkillIndex++
 				totalResult.skillCount++
+				totalResult.totalHits++
 				if actionResult.DidCrit {
 					totalResult.critCount++
 				}
@@ -114,6 +117,7 @@ func (s *simulator) RunParse(parsedSkills []parsedSkill) simResult {
 					totalResult.skillsPerformed[actionResult.SkillIndex]++
 					currentSkillIndex++
 					totalResult.skillCount++
+					totalResult.totalHits++
 					if actionResult.DidCrit {
 						totalResult.critCount++
 					}
@@ -141,7 +145,7 @@ func (s *simulator) RunParse(parsedSkills []parsedSkill) simResult {
 						damage *= actionResult.CritMultiplier
 					}
 					if actionResult.DidDirect {
-						damage *= 1.2
+						damage *= 1.25
 					}
 					lowerBound := float64(damage) * 0.95
 					upperBound := float64(damage) * 1.05
@@ -196,6 +200,7 @@ func (s *simulator) RunParse(parsedSkills []parsedSkill) simResult {
 				enemies[0].applyDamage(&result)
 				result.Log()
 				result.ApplyBuffs(*s.Players[0])
+				totalResult.totalHits++
 				if result.DidCrit {
 					totalResult.critCount++
 				}
@@ -222,9 +227,9 @@ func (s *simResult) log() {
 	globalLogFloat(Important, "Time ellapsed: ", s.timeEllapsed)
 	globalLogFloat(Important, "DPS: ", float64(s.totalDamageDone)/s.timeEllapsed)
 	globalLog(Important, "Skills performed: "+strconv.Itoa(s.skillCount))
-	globalLogFloat(Important, "Crit Rate: ", float64(s.critCount)/float64(s.skillCount))
-	globalLogFloat(Important, "Direct Rate: ", float64(s.directCount)/float64(s.skillCount))
-	globalLogFloat(Important, "CritDirect Rate: ", float64(s.critDirectCount)/float64(s.skillCount))
+	globalLogFloat(Important, "Crit Rate: ", float64(s.critCount)/float64(s.totalHits))
+	globalLogFloat(Important, "Direct Rate: ", float64(s.directCount)/float64(s.totalHits))
+	globalLogFloat(Important, "CritDirect Rate: ", float64(s.critDirectCount)/float64(s.totalHits))
 	globalLogIntSlice(Important, "Skill Counts: ", s.skillsPerformed)
 	globalLogFloat(Important, "Auto Attacks: ", float64(s.autoAttacks))
 	globalLogFloat(Important, "DoT Ticks: ", float64(s.dotTicks))
