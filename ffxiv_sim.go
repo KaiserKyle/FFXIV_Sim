@@ -138,15 +138,17 @@ func main() {
 		reader := parseReader{}
 		reader.loadParseFile(*validateParse)
 		reader.log()
+		globalLog(Important, "Parse Reading Complete...\r\n")
 
 		globalLog(Important, "Simulating Parse...")
 		for i := 0; i < *numIterations; i++ {
 			player.reset()
 			enemy.reset()
 
-			result := sim.RunParse(reader.skills)
+			//result := sim.RunParse(reader.skills)
+			reader.ValidateParse(sim)
 
-			result.log()
+			//result.log()
 		}
 	} else {
 		for i := 0; i < *numIterations; i++ {
