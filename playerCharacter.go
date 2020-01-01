@@ -73,6 +73,7 @@ func (p *playerCharacter) performAction(skillName string, enemyData *enemy) *ski
 	for i := range p.Skills {
 		if p.Skills[i].Name == skillName {
 			if !p.isSkillAvailable(skillName) {
+				globalLog(Important, "XXXX")
 				return nil
 			}
 
@@ -245,6 +246,7 @@ func (p *playerCharacter) reset() {
 		p.Skills[i].TimeRemainingOnCooldown = 0.0
 		p.Skills[i].OnCooldown = false
 	}
+	p.Effects = nil
 }
 
 func (p *playerCharacter) getSkillsAvailable() []bool {
