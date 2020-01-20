@@ -21,6 +21,7 @@ type logVerbosity int
 const (
 	Basic = iota
 	Important
+	None
 )
 
 var globalVerb logVerbosity
@@ -103,6 +104,7 @@ func main() {
 	verbFlag := flag.Int("verbosity", 0, "Log Level")
 	numIterations := flag.Int("iterations", 1, "Number of time to run the rotation file")
 	validateParse := flag.String("parse", "", "Parse to be validated against simulator")
+	csvFile := flag.String("filename", "", "Output file for multiple iteration runs")
 	flag.Parse()
 
 	if *verbFlag >= 2 {
@@ -144,19 +146,22 @@ func main() {
 		for i := 0; i < *numIterations; i++ {
 			player.reset()
 			enemy.reset()
-
-			//result := sim.RunParse(reader.skills)
 			reader.ValidateParse(sim)
-
-			//result.log()
 		}
 	} else {
+		var results simResultCollection
 		for i := 0; i < *numIterations; i++ {
 			player.reset()
 			enemy.reset()
 
 			result := sim.RunSkillQueue(skillQueue)
 			result.log()
+			results.add(result)
+		}
+
+		results.parseResults()
+		if *csvFile != "" {
+			results.exportToCsv(csvFile)
 		}
 	}
 }

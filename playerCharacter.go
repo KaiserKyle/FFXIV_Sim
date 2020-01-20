@@ -73,7 +73,6 @@ func (p *playerCharacter) performAction(skillName string, enemyData *enemy) *ski
 	for i := range p.Skills {
 		if p.Skills[i].Name == skillName {
 			if !p.isSkillAvailable(skillName) {
-				globalLog(Important, "XXXX")
 				return nil
 			}
 

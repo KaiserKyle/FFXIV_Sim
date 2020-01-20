@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+	"os"
 	"strconv"
 )
 
@@ -22,6 +24,10 @@ type simResult struct {
 	autoAttacks     int
 	dotTicks        int
 	totalHits       int
+}
+
+type simResultCollection struct {
+	results []simResult
 }
 
 func (s *simulator) RunSkillQueue(SkillQueue []string) simResult {
@@ -234,4 +240,46 @@ func (s *simResult) log() {
 	globalLogFloat(Important, "Auto Attacks: ", float64(s.autoAttacks))
 	globalLogFloat(Important, "DoT Ticks: ", float64(s.dotTicks))
 	globalLog(Important, "")
+}
+
+func (s *simResultCollection) add(res simResult) {
+	s.results = append(s.results, res)
+}
+
+func (s *simResultCollection) parseResults() {
+	var dps []float64
+	var critCountTotal int
+	var directCountTotal int
+	var critDirectCountTotal int
+	var totalHitsTotal int
+	var totalDamageDone int
+	var totalTimeEllapsed float64
+	for i := range s.results {
+		dps = append(dps, float64(s.results[i].totalDamageDone)/s.results[i].timeEllapsed)
+		critCountTotal += s.results[i].critCount
+		directCountTotal += s.results[i].directCount
+		critDirectCountTotal += s.results[i].critDirectCount
+		totalHitsTotal += s.results[i].totalHits
+		totalDamageDone += s.results[i].totalDamageDone
+		totalTimeEllapsed += s.results[i].timeEllapsed
+	}
+
+	globalLogFloat(Important, "Average Crit Rate: ", float64(critCountTotal)/float64(totalHitsTotal))
+	globalLogFloat(Important, "Average Direct Rate: ", float64(directCountTotal)/float64(totalHitsTotal))
+	globalLogFloat(Important, "Average Crit + Direct Rate: ", float64(critDirectCountTotal)/float64(totalHitsTotal))
+	globalLogFloat(Important, "Average DPS: ", float64(totalDamageDone)/totalTimeEllapsed)
+}
+
+func (s *simResultCollection) exportToCsv(fileName *string) {
+	f, err := os.Create(*fileName)
+	if err != nil {
+		globalLog(Important, "Error opening file: "+err.Error())
+		return
+	}
+	defer f.Close()
+
+	f.WriteString("SkillCount,CritCount,DirectCount,CritDirectCount,TotalDamageDone,TimeEllapsed,AutoAttacks,DotTicks,TotalHits\n")
+	for i := range s.results {
+		f.WriteString(fmt.Sprintf("%d,%d,%d,%d,%d,%f,%d,%d,%d\n", s.results[i].skillCount, s.results[i].critCount, s.results[i].directCount, s.results[i].critDirectCount, s.results[i].totalDamageDone, s.results[i].timeEllapsed, s.results[i].autoAttacks, s.results[i].dotTicks, s.results[i].totalHits))
+	}
 }
